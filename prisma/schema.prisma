@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model todo {
+  todo_id     Int      @id @default(autoincrement())
+  description String   @db.VarChar(255)
+  status      Int?     @default(0)
+  users_id    Int?
+  created_at  DateTime @db.DateTime(0)
+  users       users?   @relation(fields: [users_id], references: [users_id], onDelete: Cascade, map: "todo_users_users_id_fk")
+
+  @@index([users_id], map: "todo_users_users_id_fk")
+}
+
+model users {
+  users_id       Int       @id @default(autoincrement())
+  name           String    @db.VarChar(255)
+  username       String    @db.VarChar(100)
+  password       String    @db.VarChar(255)
+  status_account Int?      @default(0)
+  created_at     DateTime  @db.DateTime(0)
+  updated_at     DateTime? @db.DateTime(0)
+  todo           todo[]
+}
